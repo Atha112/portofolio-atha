@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { Routes, Route } from 'react-router-dom';
+import { supabase } from './lib/supabase';
 
 const Cloud = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>;
 const GitBranch = (p) => <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>;
@@ -503,14 +504,52 @@ function ContactSection() {
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   const [comments, setComments] = useState([]);
+  const [loadingComments, setLoadingComments] = useState(true);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (name.trim() && message.trim()) {
-      setComments((prev) => [...prev, { name: name.trim(), message: message.trim() }]);
-      setName('');
-      setMessage('');
+  const fetchComments = async () => {
+    setLoadingComments(true);
+    const { data, error } = await supabase
+      .from('comments')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching comments:', error.message);
+      setLoadingComments(false);
+      return;
     }
+
+    setComments(data ?? []);
+    setLoadingComments(false);
+  };
+
+  useEffect(() => {
+    fetchComments();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const trimmedName = name.trim();
+    const trimmedMessage = message.trim();
+
+    if (!trimmedName || !trimmedMessage) return;
+
+    const { data, error } = await supabase
+      .from('comments')
+      .insert([{ name: trimmedName, message: trimmedMessage }])
+      .select();
+
+    if (error) {
+      console.error('Error inserting comment:', error.message);
+      return;
+    }
+
+    if (data && data.length > 0) {
+      setComments((prev) => [data[0], ...prev]);
+    }
+
+    setName('');
+    setMessage('');
   };
 
 
@@ -610,11 +649,15 @@ function ContactSection() {
             </form>
 
             {/* Comments list */}
-            {comments.length > 0 && (
-              <div className="mt-5 space-y-2 max-h-48 overflow-y-auto pr-1">
-                {comments.map((c, i) => (
+            <div className="mt-5 space-y-2 max-h-48 overflow-y-auto pr-1">
+              {loadingComments ? (
+                <p className="text-gray-400 text-sm">Loading comments...</p>
+              ) : comments.length === 0 ? (
+                <p className="text-gray-400 text-sm">No comments yet. Be the first to post!</p>
+              ) : (
+                comments.map((c) => (
                   <motion.div
-                    key={i}
+                    key={c.id ?? `${c.name}-${c.message}`}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="bg-[#0f0b2e]/50 rounded-xl p-3 border border-[#6366f1]/20"
@@ -622,9 +665,9 @@ function ContactSection() {
                     <p className="text-[#60a5fa] font-medium text-sm mb-1">{c.name}</p>
                     <p className="text-gray-300 text-sm">{c.message}</p>
                   </motion.div>
-                ))}
-              </div>
-            )}
+                ))
+              )}
+            </div>
           </div>
         </AnimatedSection>
       </div>
