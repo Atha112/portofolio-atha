@@ -525,6 +525,25 @@ function ContactSection() {
 
   useEffect(() => {
     fetchComments();
+
+    const channel = supabase
+      .channel('comments-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'comments',
+        },
+        (payload) => {
+          setComments((prev) => [payload.new, ...prev]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const handleSubmit = async (e) => {
