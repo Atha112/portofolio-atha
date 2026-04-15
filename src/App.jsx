@@ -524,6 +524,8 @@ function ContactSection() {
   };
 
   useEffect(() => {
+    console.log('USE EFFECT JALAN');
+
     fetchComments();
 
     const channel = supabase
@@ -536,10 +538,18 @@ function ContactSection() {
           table: 'comments',
         },
         (payload) => {
-          setComments((prev) => [payload.new, ...prev]);
+          console.log('REALTIME MASUK:', payload);
+
+          setComments((prev) => {
+            const exists = prev.find((c) => c.id === payload.new.id);
+            if (exists) return prev;
+            return [payload.new, ...prev];
+          });
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('STATUS:', status);
+      });
 
     return () => {
       supabase.removeChannel(channel);
