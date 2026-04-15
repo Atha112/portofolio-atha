@@ -328,7 +328,7 @@ function HeroSection() {
           className="text-white/80 text-base sm:text-lg md:text-xl mb-3 sm:mb-4 h-7 sm:h-8 md:h-9 flex items-center justify-center"
         >
           <TypeWriter
-            texts={['Tech Enthusiast', 'Technology Information Student']}
+            texts={['Information Technology Student at Universitas Brawijaya']}
             speed={80}
             deleteSpeed={45}
             pauseDuration={1500}
@@ -451,8 +451,6 @@ function ToolsSection() {
    ABOUT SECTION
    ══════════════════════════════════════════════════════════════ */
 function AboutSection() {
-  const tags = ['Prodi : Teknologi Informasi', 'Kelas T2F', 'Domisili : Malang'];
-
   return (
     <section id="about" className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <AnimatedSection className="text-center mb-10 sm:mb-14">
@@ -488,27 +486,9 @@ function AboutSection() {
               pengembangan web dan teknologi modern. Saat ini saya sedang mendalami berbagai teknologi seperti React,
               JavaScript, Node.js, dan Tailwind CSS untuk membangun aplikasi web yang menarik dan fungsional. Saya
               percaya bahwa teknologi dapat mengubah dunia menjadi lebih baik, dan saya ingin menjadi bagian dari
-              perubahan tersebut. Dengan semangat belajar yang tinggi dan dedikasi yang kuat, saya terus mengembangkan
-              kemampuan saya setiap hari. Selain coding, saya juga aktif mengikuti komunitas developer dan berbagi
-              pengetahuan melalui berbagai platform. Tujuan saya adalah menjadi full-stack developer yang handal dan
+              perubahan tersebut. Disi lain, saya juga memiliki ketertarikan pada bidang Cyber Security dan dunia Web3. Saya adalah orang yang ingin memulai terjun kedalam dua bidang itu. Tujuan saya saat ini dan nantinya adalah menjadi full-stack developer yang handal dan
               berkontribusi pada proyek-proyek open source yang bermanfaat bagi banyak orang.
             </p>
-
-            {/* Tags */}
-            <div className="flex flex-wrap gap-3">
-              {tags.map((tag, idx) => (
-                <motion.span
-                  key={tag}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.5 + idx * 0.15, duration: 0.4 }}
-                  className="bg-[#6366f1] hover:bg-[#7c3aed] text-white px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors"
-                >
-                  {tag}
-                </motion.span>
-              ))}
-            </div>
           </div>
         </AnimatedSection>
       </div>
