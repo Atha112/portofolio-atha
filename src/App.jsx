@@ -701,6 +701,7 @@ function PortfolioPage() {
 export default function App() {
   return (
     <Routes>
+      <Route path="/" element={<PortfolioPage />} />
       <Route path="/teuku-atha-athaya-nafi" element={<PortfolioPage />} />
     </Routes>
   );
